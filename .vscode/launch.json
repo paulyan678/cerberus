@@ -1,0 +1,21 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            // # python3 scripts/describe-and-classify.py --input_file data/video-files.jsonl --classes 'Criminal Act' 'Porch Piracy' 'Package Delivery (Non-Theft)' --output_file data/video-descriptions-and-classifications.jsonl
+            "args": [
+                "data/video-descriptions-and-classifications.jsonl",
+                "data/corpus_embedding.json",
+                "data/documents"
+            ]
+        }
+    ]
+}
