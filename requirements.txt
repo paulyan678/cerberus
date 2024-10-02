@@ -4,3 +4,5 @@ jsonlines~=4.0.0
 python-dotenv~=1.0.1
 Sphinx~=8.0.2
 tqdm~=4.66.5
+sentence_transformers~=2.7.0
+chromadb~=0.5.5
