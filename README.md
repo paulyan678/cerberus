@@ -18,7 +18,7 @@ python scripts/upload.py 'data/**/*.mp4' 'data/**/*.mov' > data/video-files.json
 Describe and classify video files.
 
 ```console
-cat data/video-files.jsonl | python scripts/describe-and-classify.py 'Criminal Act' 'Porch Piracy' 'Package Delivery (Non-Theft)' > data/video-descriptions-and-classifications.jsonl
+python scripts/describe-and-classify.py 'Criminal Act' 'Porch Piracy' 'Package Delivery (Non-Theft)' < data/video-files.jsonl > data/video-descriptions-and-classifications.jsonl
 ```
 
 Calculate confusion matrix values.

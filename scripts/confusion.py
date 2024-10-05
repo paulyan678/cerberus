@@ -36,6 +36,16 @@ def main():
     with open(args.predicted_classifications_pathname) as file:
         predicted_classifications = list(file)
 
+    actual_classifications.sort(key=itemgetter('pathname'))
+    predicted_classifications.sort(key=itemgetter('pathname'))
+
+    pathnames = set(map(itemgetter('pathname'), actual_classifications))
+    predicted_classifications = [
+        row
+        for row in predicted_classifications
+        if row['pathname'] in pathnames
+    ]
+
     if actual_classifications:
         classes = list(
             map(itemgetter(0), actual_classifications[0]['classifications']),
