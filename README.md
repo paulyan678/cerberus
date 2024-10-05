@@ -1,11 +1,13 @@
 # CCTV Analysis Service
-create .env file and insert the folllowing infos:
 
-GOOGLE_GENERATIVE_AI_API_KEY=[your API key]
+Create a `.env` file with your Google Gen-AI API key.
 
-GOOGLE_GENERATIVE_AI_MODEL="gemini-1.5-flash"
-
-EMBEDDING_MODEL="sentence-transformers/multi-qa-mpnet-base-cos-v1"
+```console
+echo 'GOOGLE_GENERATIVE_AI_API_KEY=[Your API Key]
+GOOGLE_GENERATIVE_AI_MODEL=gemini-1.5-flash
+EMBEDDING_MODEL=sentence-transformers/multi-qa-mpnet-base-cos-v1
+CHROMADB_COLLECTION_NAME=cerberus' > .env
+```
 
 Upload video files.
 
@@ -25,12 +27,15 @@ Calculate confusion matrix values.
 python scripts/confusion.py data/video-golden-outputs.jsonl data/video-descriptions-and-classifications.jsonl > data/video-confusion.jsonl
 ```
 
-generate text embeddings for the videos
+Generate text embeddings for the videos.
+
 ```console
-python scripts/gen_text_embedding.py --input_file data/video-descriptions-and-classifications.jsonl --output_file_embedding data/corpus_embedding.json --output_file_text_dir data/documents
+python scripts/generate-embeddings.py < data/video-descriptions-and-classifications.jsonl > data/video-description-embeddings.jsonl
 ```
 
-Search for events
+Search for events.
+
 ```console
-python scripts/ir_system.py --embedding data/corpus_embedding.json --document_dir data/documents --topic_phrase "delivery"
+python scripts/dense-retrieval.py 3 ambulance animal delivery < data/video-description-embeddings.jsonl
+python scripts/sparse-retrieval.py 3 ambulance animal delivery < data/video-description-embeddings.jsonl
 ```
