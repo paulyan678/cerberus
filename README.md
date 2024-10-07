@@ -1,4 +1,8 @@
 # CCTV Analysis Service
+create .env file and insert the folllowing infos:
+GOOGLE_GENERATIVE_AI_API_KEY=[your API key]
+GOOGLE_GENERATIVE_AI_MODEL="gemini-1.5-flash"
+EMBEDDING_MODEL="sentence-transformers/multi-qa-mpnet-base-cos-v1"
 
 Upload video files.
 
