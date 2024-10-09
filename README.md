@@ -39,7 +39,9 @@ Search for events.
 python scripts/dense-retrieval.py 3 ambulance animal delivery < data/video-description-embeddings.jsonl
 python scripts/sparse-retrieval.py 3 ambulance animal delivery < data/video-description-embeddings.jsonl
 ```
+
 Evaluate IR System
+```console
 python scripts/ir_eval.py \
     --queries "Is there an animal moving?" "Did people steal my package?" \
     "Did people break into my home?" "Is there people walking in front of my home?" \
@@ -49,3 +51,12 @@ python scripts/ir_eval.py \
     --return_k 20 \
     --top_k 5 \
     --sparse_or_dense dense
+python scripts/ir_eval.py \
+    --queries "delivery" "enter leave access home" "car" "people walking" "breakin" \
+    "steal package" "animal moving" \
+    --embeddings_file data/video-description-embeddings.jsonl \
+    --ground_truth_file data/ground_truth.json \
+    --return_k 20 \
+    --top_k 5 \
+    --sparse_or_dense sparse
+```
