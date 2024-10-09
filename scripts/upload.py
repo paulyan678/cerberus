@@ -20,7 +20,12 @@ def main():
 
     with Writer(stdout) as writer:
         for pathname in tqdm(pathnames):
-            video_file = upload_file(path=pathname)
+            while True:
+                try:
+                    video_file = upload_file(path=pathname)
+                    break
+                except Exception:
+                    pass
 
             writer.write({'pathname': pathname, 'name': video_file.name})
 
