@@ -18,7 +18,7 @@ python scripts/upload.py 'data/**/*.mp4' 'data/**/*.mov' > data/video-files.json
 Describe and classify video files.
 
 ```console
-cat data/video-files.jsonl | python scripts/describe-and-classify.py 'Criminal Act' 'Porch Piracy' 'Package Delivery (Non-Theft)' > data/video-descriptions-and-classifications.jsonl
+python scripts/describe-and-classify.py 'Criminal Act' 'Porch Piracy' 'Package Delivery (Non-Theft)' < data/video-files.jsonl > data/video-descriptions-and-classifications.jsonl
 ```
 
 Calculate confusion matrix values.
@@ -39,3 +39,13 @@ Search for events.
 python scripts/dense-retrieval.py 3 ambulance animal delivery < data/video-description-embeddings.jsonl
 python scripts/sparse-retrieval.py 3 ambulance animal delivery < data/video-description-embeddings.jsonl
 ```
+Evaluate IR System
+python scripts/ir_eval.py \
+    --queries "Is there an animal moving?" "Did people steal my package?" \
+    "Did people break into my home?" "Is there people walking in front of my home?" \
+    "Did someone drive by?" "Is there a package delivery?" \
+    --embeddings_file data/video-description-embeddings.jsonl \
+    --ground_truth_file data/ground_truth.json \
+    --return_k 20 \
+    --top_k 5 \
+    --sparse_or_dense dense

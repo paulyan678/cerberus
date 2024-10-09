@@ -1,7 +1,9 @@
 from re import compile, IGNORECASE, search
 from warnings import warn
 
-DESCRIPTION_PROMPT = 'What is happening in the CCTV footage?'
+DESCRIPTION_PROMPT = (
+    'What is happening in the CCTV footage? Explain in detail.'
+)
 CLASSIFICATION_PROMPT = '''
 Is the CCTV footage of the given class? Begin your response with 'Yes' or 'No'.
 
