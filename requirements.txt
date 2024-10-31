@@ -1,6 +1,9 @@
+chromadb~=0.5.16
 flake8~=7.1.1
 google-generativeai~=0.8.2
 jsonlines~=4.0.0
 python-dotenv~=1.0.1
+sentence_transformers~=3.2.1
 Sphinx~=8.0.2
 tqdm~=4.66.5
+whoosh~=2.7.4
