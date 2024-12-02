@@ -2,6 +2,7 @@ from argparse import ArgumentParser
 from datetime import datetime
 from operator import itemgetter
 from sys import stdout
+from os.path import basename
 
 from jsonlines import open, Writer
 
@@ -35,6 +36,25 @@ def main():
 
     with open(args.predicted_classifications_pathname) as file:
         predicted_classifications = list(file)
+
+    # Extract only the file names from the pathnames
+    for row in actual_classifications:
+        row['filename'] = basename(row['pathname'])
+
+    for row in predicted_classifications:
+        row['filename'] = basename(row['pathname'])
+
+    # Sort based on the file names
+    actual_classifications.sort(key=itemgetter('filename'))
+    predicted_classifications.sort(key=itemgetter('filename'))
+
+    # Match only based on file names
+    filenames = set(map(itemgetter('filename'), actual_classifications))
+    predicted_classifications = [
+        row
+        for row in predicted_classifications
+        if row['filename'] in filenames
+    ]
 
     if actual_classifications:
         classes = list(
