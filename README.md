@@ -40,7 +40,7 @@ python scripts/dense-retrieval.py 3 ambulance animal delivery < data/video-descr
 python scripts/sparse-retrieval.py 3 ambulance animal delivery < data/video-description-embeddings.jsonl
 ```
 
-### Evaluate IR System
+Evaluate IR System
 
 ```console
 python scripts/ir_eval.py \
