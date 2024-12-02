@@ -17,14 +17,21 @@ def main():
     configure(api_key=getenv('GOOGLE_GENERATIVE_AI_API_KEY'))
 
     model = GenerativeModel(getenv('GOOGLE_GENERATIVE_AI_MODEL'))
-    classes = argv[1:]
+    classes = getenv('CLASSES').split(', ')
 
     with Reader(stdin) as reader:
         inputs = list(reader)
 
     with Writer(stdout) as writer:
         for input_ in tqdm(inputs):
-            video_file = get_file(input_['name'])
+            while True:
+                try:
+                    # Attempt to download the file
+                    video_file = get_file(input_['name'])
+                    break  # Exit the loop if successful
+                except Exception as e:
+                    continue
+
             input_['description'], input_['classifications'] = (
                 describe_and_classify(model, video_file, classes)
             )
