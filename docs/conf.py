@@ -1,28 +1,32 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# For the full list of built-in configuration values, see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""Sphinx configuration for the Cerberus documentation."""
 
-# -- Project information -----------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+from __future__ import annotations
 
-project = 'cerberus'
-copyright = '2024, Juho Kim, Minchan Kim, Jacky Kuang, and Paul Yan'
-author = 'Juho Kim, Minchan Kim, Jacky Kuang, and Paul Yan'
-release = '0.0.0'
+import sys
+from pathlib import Path
 
-# -- General configuration ---------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 
-extensions = []
+project = "Cerberus"
+copyright = "2024-2026, Juho Kim, Minchan Kim, Jacky Kuang, and Paul Yan"
+author = "Juho Kim, Minchan Kim, Jacky Kuang, and Paul Yan"
+version = "0.1"
+release = "0.1.0"
 
-templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
+]
 
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+language = "en"
+pygments_style = "sphinx"
 
-
-# -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
-html_theme = 'alabaster'
-html_static_path = ['_static']
+html_theme = "alabaster"
+html_title = "Cerberus documentation"
+html_theme_options = {
+    "description": "CCTV event analysis and retrieval toolkit",
+    "fixed_sidebar": True,
+}

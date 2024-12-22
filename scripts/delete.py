@@ -1,22 +1,8 @@
-from os import getenv
-from sys import stdin
+from _bootstrap import bootstrap
 
-from dotenv import load_dotenv
-from google.generativeai import configure, delete_file
-from jsonlines import Reader
-from tqdm import tqdm
+bootstrap()
 
+from cerberus.cli import delete_files_main  # noqa: E402
 
-def main():
-    load_dotenv()
-    configure(api_key=getenv('GOOGLE_GENERATIVE_AI_API_KEY'))
-
-    with Reader(stdin) as reader:
-        inputs = list(reader)
-
-    for input_ in tqdm(inputs):
-        delete_file(name=input_['name'])
-
-
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    delete_files_main()

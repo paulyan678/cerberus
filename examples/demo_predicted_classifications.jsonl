@@ -1,0 +1,4 @@
+{"video_id":"door-004","pathname":"synthetic/camera_door_004.mp4","classifications":[["People Walking",true],["Vehicle Moving",false],["Animal Moving",false],["Package Delivery",false]]}
+{"video_id":"street-003","pathname":"synthetic/camera_street_003.mp4","classifications":[["People Walking",false],["Vehicle Moving",true],["Animal Moving",false],["Package Delivery",false]]}
+{"video_id":"front-001","pathname":"synthetic/camera_front_001.mp4","classifications":[["People Walking",true],["Vehicle Moving",false],["Animal Moving",false],["Package Delivery",true]]}
+{"video_id":"driveway-002","pathname":"synthetic/camera_driveway_002.mp4","classifications":[["People Walking",false],["Vehicle Moving",false],["Animal Moving",true],["Package Delivery",false]]}

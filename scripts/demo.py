@@ -2,7 +2,7 @@ from _bootstrap import bootstrap
 
 bootstrap()
 
-from cerberus.cli import describe_main  # noqa: E402
+from cerberus.cli import demo_main  # noqa: E402
 
 if __name__ == "__main__":
-    describe_main()
+    demo_main()

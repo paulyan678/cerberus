@@ -1,0 +1,5 @@
+{
+  "package delivery": ["camera_front_001.mp4"],
+  "animal in driveway": ["camera_driveway_002.mp4"],
+  "person near front door": ["camera_door_004.mp4", "camera_porch_006.mp4"]
+}
