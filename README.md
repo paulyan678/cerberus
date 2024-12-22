@@ -2,8 +2,8 @@
 
 Cerberus is a research-oriented toolkit for describing, classifying, searching,
 and evaluating events in CCTV footage. It was developed as a University of
-Toronto Engineering Science capstone project by Juho Kim, Minchan Kim, Jacky
-Kuang, and Paul Yan.
+Toronto Engineering Science capstone project by Paul Yan, Juho Kim, Minchan
+Kim, and Jacky Kuang.
 
 > **Project status:** Cerberus is an academic prototype, not a production
 > security, safety, or identity system. Review the privacy and reliability

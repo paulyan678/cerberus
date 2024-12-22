@@ -9,8 +9,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 project = "Cerberus"
-copyright = "2024-2026, Juho Kim, Minchan Kim, Jacky Kuang, and Paul Yan"
-author = "Juho Kim, Minchan Kim, Jacky Kuang, and Paul Yan"
+copyright = "2024-2026, Paul Yan, Juho Kim, Minchan Kim, and Jacky Kuang"
+author = "Paul Yan, Juho Kim, Minchan Kim, and Jacky Kuang"
 version = "0.1"
 release = "0.1.0"
 

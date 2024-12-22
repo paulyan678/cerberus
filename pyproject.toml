@@ -9,10 +9,10 @@ description = "CCTV video understanding, event classification, and retrieval too
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
+  {name = "Paul Yan"},
   {name = "Juho Kim"},
   {name = "Minchan Kim"},
   {name = "Jacky Kuang"},
-  {name = "Paul Yan"},
 ]
 dependencies = [
   "google-genai>=1.0,<2",
