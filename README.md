@@ -169,7 +169,15 @@ retrieval ground truth.
 The repository does not claim real-world research metrics. The committed
 fixtures only verify that the software behaves deterministically. A defensible
 experiment must document dataset provenance, annotation protocol, model
-version, split, query set, and parameters. See [Evaluation](docs/evaluation.rst).
+version, split, query set, and parameters. The optional `--fixture-manifest` gate
+checks a bounded local clip set, file hashes, record/label joins, and the reviewer's
+independent-label declarations before evaluation. It cannot prove those human
+declarations, and no real-video benchmark has been run as part of this update.
+See the concrete [fixture protocol](docs/evaluation.rst).
+
+Dense retrieval rejects nonfinite embeddings and safely normalizes extreme finite
+values. Invalid data fails before CLI output, rather than receiving a misleading
+best-match distance.
 
 ## Repository guide
 

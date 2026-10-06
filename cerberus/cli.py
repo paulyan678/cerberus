@@ -11,8 +11,10 @@ from pathlib import Path
 from sys import stderr, stdin, stdout
 from typing import Any
 
+from cerberus import __version__
 from cerberus.config import GeminiSettings, embedding_model_name
 from cerberus.evaluation import classification_confusions, evaluate_retrieval
+from cerberus.fixtures import file_sha256, validate_video_fixture
 from cerberus.gemini import GeminiModel, create_client, retry, wait_for_file
 from cerberus.io import load_json, load_jsonl, read_jsonl, write_jsonl
 from cerberus.retrieval import rank_dense, rank_sparse
@@ -239,6 +241,8 @@ def confusion_main(argv: Sequence[str] | None = None) -> None:
 
 def _print_ir_report(report: dict[str, Any]) -> None:
     print("Evaluation results")
+    if "fixture" in report:
+        print(f"Fixture validation: {report['fixture']['validation']}")
     print("=" * 72)
     for query, result in report["queries"].items():
         print(f"Query: {query}")
@@ -292,6 +296,11 @@ def ir_eval_main(argv: Sequence[str] | None = None) -> None:
         required=True,
     )
     parser.add_argument("--json", action="store_true", help="Emit JSON instead of text")
+    parser.add_argument(
+        "--fixture-manifest",
+        type=Path,
+        help="Validate frozen real-video assets and independent-label declarations",
+    )
     args = parser.parse_args(argv)
     if args.top_k > args.return_k:
         parser.error("--top-k cannot exceed --return-k")
@@ -301,13 +310,22 @@ def ir_eval_main(argv: Sequence[str] | None = None) -> None:
     if not isinstance(ground_truth, dict):
         raise ValueError("ground truth must be a JSON object")
 
+    fixture = None
+    if args.fixture_manifest:
+        fixture = validate_video_fixture(
+            args.fixture_manifest, Path(args.ground_truth_file), records, args.queries
+        )
+        fixture["system_records_sha256"] = file_sha256(Path(args.embeddings_file))
+
+    model_name = None
     if args.method == "sparse":
 
         def search(query: str, k: int) -> list[dict[str, Any]]:
             return rank_sparse(records, query, k)
     else:
         _load_environment()
-        model = _sentence_transformer()(embedding_model_name())
+        model_name = embedding_model_name()
+        model = _sentence_transformer()(model_name)
         query_embeddings = {
             query: vector
             for query, vector in zip(
@@ -327,6 +345,17 @@ def ir_eval_main(argv: Sequence[str] | None = None) -> None:
         return_k=args.return_k,
         top_k=args.top_k,
     )
+    report["retrieval"] = {
+        "method": args.method,
+        "embedding_model": model_name,
+        "embedding_revision": "unrecorded" if model_name else None,
+        "cerberus_version": __version__,
+        "source_revision": "unrecorded",
+    }
+    if fixture is not None:
+        report["fixture"] = fixture
+    else:
+        report["fixture"] = {"validation": "unverified_inputs"}
     if args.json:
         json.dump(report, stdout, indent=2)
         stdout.write("\n")

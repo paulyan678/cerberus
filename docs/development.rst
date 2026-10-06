@@ -77,3 +77,25 @@ Contribution and security policy
 Read ``CONTRIBUTING.md`` before preparing a pull request and ``SECURITY.md``
 before reporting a vulnerability. No open-source license has been selected;
 contributions do not implicitly change that status.
+
+Numerical and evaluation decisions
+----------------------------------
+
+Cosine retrieval rejects NaN and infinite components before ranking. It scales
+finite vectors by their largest absolute component before normalization, so
+valid very large or small values do not overflow/underflow naive squared norms.
+Only finite normalized roundoff is clamped to the cosine range. Errors propagate
+through ranking and the CLI before any JSONL output is written; a malformed
+embedding cannot silently become the best match.
+
+The optional fixture manifest adds a file/provenance gate around the existing
+evaluator. It does not add a second metric implementation or synthesize a new
+benchmark. Human labels and their review history remain separate from generated
+descriptions. See :doc:`evaluation` for the protocol and its limits.
+
+The capstone team's existing credit and repository history are retained. The
+synthetic demo remains a software check; human review and real-data evaluation
+must be recorded separately.
+
+Coverage configuration is explicit so subprocess tests run from another working
+directory use the same branch-coverage settings as the parent test process.
