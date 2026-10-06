@@ -50,7 +50,7 @@ include = ["cerberus*"]
 cerberus = ["demo_data/*.json", "demo_data/*.jsonl"]
 
 [tool.pytest.ini_options]
-addopts = "--strict-markers --strict-config --cov=cerberus --cov-report=term-missing"
+addopts = "--strict-markers --strict-config --cov=cerberus --cov-config=pyproject.toml --cov-report=term-missing"
 testpaths = ["tests"]
 
 [tool.coverage.run]
