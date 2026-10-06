@@ -149,3 +149,33 @@ def test_dense_ranking_validates_query_k_and_record_embeddings(
         rank_dense(records, " ", [1, 0], 1)
     with pytest.raises(ValueError, match="record 0 has no embedding list"):
         rank_dense([{"embedding": (1.0, 0.0)}], "query", [1, 0], 1)
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), -float("inf")])
+@pytest.mark.parametrize("side", ["left", "right"])
+def test_cosine_rejects_nonfinite_input(value: float, side: str) -> None:
+    left, right = [1.0, 0.0], [1.0, 0.0]
+    (left if side == "left" else right)[0] = value
+    with pytest.raises(ValueError, match="finite"):
+        cosine_distance(left, right)
+
+
+@pytest.mark.parametrize("scale", [1e308, 1e-308])
+def test_cosine_preserves_geometry_at_extreme_finite_scales(scale: float) -> None:
+    assert cosine_distance([scale, scale], [scale, 0]) == pytest.approx(1 - 2**-0.5)
+    assert cosine_distance([scale, scale], [-scale, -scale]) == pytest.approx(2)
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), -float("inf")])
+def test_dense_rejects_invalid_query_even_for_empty_corpus(bad: float) -> None:
+    with pytest.raises(ValueError, match="finite"):
+        rank_dense([], "query", [bad], 1)
+
+
+def test_dense_rejects_invalid_record_instead_of_ranking_it_first() -> None:
+    records = [
+        {"pathname": "good.mp4", "embedding": [1.0, 0.0]},
+        {"pathname": "bad.mp4", "embedding": [float("nan"), 0.0]},
+    ]
+    with pytest.raises(ValueError, match=r"record 1.*finite"):
+        rank_dense(records, "query", [1.0, 0.0], 2)

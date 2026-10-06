@@ -93,3 +93,72 @@ easy assertions. Its metrics show that the implementation connects and computes
 as expected. They do not estimate accuracy, generalization, robustness, bias,
 or real CCTV performance. This repository makes no claim of measured real-world
 performance.
+
+A bounded real-video fixture
+----------------------------
+
+The next useful measurement is a small holdout set, not a larger synthetic demo.
+Start with 12-20 clips from footage you may use, including missed-event and
+no-relevant-result cases, and 5-10 fixed queries. Keep related clips from the
+same event/camera session together when splitting development and holdout data.
+Use local ``data/`` storage; no real footage or results are included in this change.
+
+A reviewer watches the clips and writes relevance judgments **before seeing
+model descriptions, embeddings, or rankings**. Freeze queries, labels, clip
+hashes and the review protocol; use a second reviewer to adjudicate ambiguous
+cases before running evaluation. Do not use model-generated labels as truth,
+or tune prompts on this holdout. Keep failed queries and report each result,
+not only the average. Compare sparse and dense retrieval on these same inputs.
+
+``--fixture-manifest`` checks a frozen fixture with 1-50 local clips and 1-20
+queries. The following is a schema example, not an executed real-video result;
+replace every placeholder and compute SHA-256 from the actual file bytes:
+
+.. code-block:: json
+
+   {
+     "schema_version": 1,
+     "dataset_kind": "real_video",
+     "dataset_id": "your-holdout-version",
+     "annotator": "actual reviewer identity",
+     "annotation_method": "manual_video_review",
+     "model_outputs_seen": false,
+     "frozen_at": "ACTUAL_ISO8601_TIMESTAMP_WITH_TIMEZONE",
+     "queries": ["package delivery"],
+     "ground_truth_sha256": "SHA256_OF_GROUND_TRUTH_FILE",
+     "clips": [{
+       "pathname": "clips/clip-001.mp4",
+       "source": "actual collection or source reference",
+       "rights": "documented permission or license",
+       "sha256": "SHA256_OF_CLIP_BYTES"
+     }]
+   }
+
+Clip paths are relative to the manifest and must stay inside its directory.
+Basenames must be unique. Ground truth uses the existing query-to-filename-list
+format (for example ``{"package delivery": ["clip-001.mp4"]}``). Every record
+must map to exactly one clip; unknown relevant IDs, duplicate records, changed
+files, missing provenance fields and non-blinded label declarations are rejected
+before model loading. Use ``shasum -a 256 FILE`` to compute file hashes.
+
+.. code-block:: bash
+
+   cerberus-evaluate-ir \
+     --fixture-manifest data/holdout/manifest.json \
+     --queries 'package delivery' \
+     --embeddings-file data/holdout/system-records.jsonl \
+     --ground-truth-file data/holdout/ground-truth.json \
+     --return-k 10 --top-k 5 --method sparse --json \
+     > data/holdout/sparse-report.json
+
+The report includes manifest, label and system-record hashes, retrieval method,
+cutoffs, package version, and the configured dense embedding model name. Exact
+embedding/source revisions are marked ``unrecorded``; retain them in run notes.
+A model name alone does not pin its weights or the earlier description generator. Without the flag,
+reports say ``unverified_inputs``. With it they say
+``file_hashes_and_declared_annotation_protocol``: software checks the files and
+declarations, but cannot prove human independence, consent, video authenticity,
+or that the frozen timestamp was recorded before model use. Retain review notes,
+collection consent/license records, model/prompt versions and failures alongside
+results. No measured real-video accuracy is claimed until this separate human
+annotation and evaluation has actually happened.

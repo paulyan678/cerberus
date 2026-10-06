@@ -93,19 +93,35 @@ def rank_sparse(
     return results
 
 
-def cosine_distance(left: Sequence[float], right: Sequence[float]) -> float:
-    """Return cosine distance in ``[0, 2]`` for non-zero vectors."""
-    if not left or not right:
+def _unit_vector(values: Sequence[float]) -> list[float]:
+    if not values:
         raise ValueError("vectors cannot be empty")
+    try:
+        vector = [float(value) for value in values]
+    except (TypeError, ValueError, OverflowError) as error:
+        raise ValueError("vector components must be finite numbers") from error
+    if not all(math.isfinite(value) for value in vector):
+        raise ValueError("vector components must be finite numbers")
+    scale = max(abs(value) for value in vector)
+    if scale == 0:
+        raise ValueError("cosine distance is undefined for zero vectors")
+    # Scale before squaring: valid finite values can overflow or underflow
+    # naive dot products and norms (for example 1e308 and 1e-308).
+    scaled = [value / scale for value in vector]
+    norm = math.sqrt(math.fsum(value * value for value in scaled))
+    return [value / norm for value in scaled]
+
+
+def _unit_distance(left: Sequence[float], right: Sequence[float]) -> float:
     if len(left) != len(right):
         raise ValueError(f"vector dimensions differ: {len(left)} != {len(right)}")
-    dot_product = sum(float(a) * float(b) for a, b in zip(left, right, strict=True))
-    left_norm = math.sqrt(sum(float(value) ** 2 for value in left))
-    right_norm = math.sqrt(sum(float(value) ** 2 for value in right))
-    if left_norm == 0 or right_norm == 0:
-        raise ValueError("cosine distance is undefined for zero vectors")
-    similarity = max(-1.0, min(1.0, dot_product / (left_norm * right_norm)))
-    return 1.0 - similarity
+    similarity = math.fsum(a * b for a, b in zip(left, right, strict=True))
+    return 1.0 - max(-1.0, min(1.0, similarity))
+
+
+def cosine_distance(left: Sequence[float], right: Sequence[float]) -> float:
+    """Return cosine distance for finite non-zero vectors, safely rescaled."""
+    return _unit_distance(_unit_vector(left), _unit_vector(right))
 
 
 def rank_dense(
@@ -119,12 +135,17 @@ def rank_dense(
     if not query.strip():
         raise ValueError("query cannot be empty")
 
+    query_unit = _unit_vector(query_embedding)
     scored: list[tuple[float, int]] = []
     for index, record in enumerate(records):
         embedding = record.get("embedding")
         if not isinstance(embedding, list):
             raise ValueError(f"record {index} has no embedding list")
-        scored.append((cosine_distance(query_embedding, embedding), index))
+        try:
+            distance = _unit_distance(query_unit, _unit_vector(embedding))
+        except ValueError as error:
+            raise ValueError(f"record {index}: {error}") from error
+        scored.append((distance, index))
 
     scored.sort(key=lambda item: (item[0], item[1]))
     results: list[Record] = []

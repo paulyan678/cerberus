@@ -136,3 +136,30 @@ def test_offline_demo_runs_from_outside_the_repository(tmp_path: Path) -> None:
         "PASS: deterministic retrieval and evaluation checks completed."
         in process.stdout
     )
+
+
+@pytest.mark.parametrize("bad_source", ["query", "record"])
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), -float("inf")])
+def test_dense_cli_propagates_invalid_vectors_without_partial_output(
+    monkeypatch: pytest.MonkeyPatch, bad_source: str, bad: float
+) -> None:
+    from types import SimpleNamespace
+
+    class Encoder:
+        def __init__(self, _name: str) -> None:
+            pass
+
+        def encode(self, _queries: list[str]) -> SimpleNamespace:
+            vector = [bad, 0.0] if bad_source == "query" else [1.0, 0.0]
+            return SimpleNamespace(tolist=lambda: [vector])
+
+    embedding = [bad, 0.0] if bad_source == "record" else [1.0, 0.0]
+    source = io.StringIO(json.dumps({"embedding": embedding}) + "\n")
+    output = io.StringIO()
+    monkeypatch.setattr(cli, "stdin", source)
+    monkeypatch.setattr(cli, "stdout", output)
+    monkeypatch.setattr(cli, "_load_environment", lambda: None)
+    monkeypatch.setattr(cli, "_sentence_transformer", lambda: Encoder)
+    with pytest.raises(ValueError, match="finite"):
+        cli.dense_main(["1", "query"])
+    assert output.getvalue() == ""

@@ -39,7 +39,9 @@ Installed commands
    ``--embeddings-file``, ``--ground-truth-file``, ``--return-k``, ``--top-k``,
    and ``--method {sparse,dense}``. ``top-k`` cannot exceed ``return-k``. Add
    ``--json`` for structured output. Underscored legacy option names remain
-   accepted for compatibility.
+   accepted for compatibility. Optional ``--fixture-manifest PATH`` verifies
+   frozen local clips and label declarations before retrieval; see
+   :doc:`evaluation`. Reports without it identify inputs as unverified.
 
 ``cerberus-confusion ACTUAL.jsonl PREDICTED.jsonl``
    Emit one per-class confusion-count record. Both inputs must contain the same
